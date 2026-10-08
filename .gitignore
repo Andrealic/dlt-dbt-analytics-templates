@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# dlt
+.dlt/secrets.toml
+.dlt/*.secrets.toml
+
+# dbt
+target/
+dbt_packages/
+logs/
+profiles.yml
+.user.yml
+*.duckdb
+*.duckdb.wal
+
+# Local environment
+.env
+.env.*
