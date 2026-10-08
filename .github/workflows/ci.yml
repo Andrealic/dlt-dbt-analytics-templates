@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pipedrive-ingest:
+    name: Pipedrive ingest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: connectors/pipedrive/ingest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.11"
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run pytest
+
+  pipedrive-transform:
+    name: Pipedrive dbt
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: connectors/pipedrive/transform
+    env:
+      DBT_PROFILES_DIR: .
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: "3.11"
+      - run: uv tool install dbt-core==1.11.15 --with dbt-duckdb==1.11.0
+      - run: cp profiles.example.yml profiles.yml
+      - run: dbt deps
+      # No lake in CI: bronze tables read as empty and every layer is built in DuckDB.
+      - run: >-
+          dbt build --target ci
+          --vars '{output_locations: {staging: engine, intermediate: engine, marts: engine}}'
