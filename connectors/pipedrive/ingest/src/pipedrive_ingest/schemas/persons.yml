@@ -1,0 +1,25 @@
+name: persons
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  name: text
+  first_name: text
+  last_name: text
+  owner_id: bigint
+  org_id: bigint
+  emails: json
+  phones: json
+  visible_to: bigint
+  label_ids: json
+  picture_id: bigint
+  postal_address: json
+  notes: text
+  im: json
+  birthday: text
+  job_title: text
+  is_deleted: bool
+  add_time: timestamp
+  update_time: timestamp
+  custom_fields: json

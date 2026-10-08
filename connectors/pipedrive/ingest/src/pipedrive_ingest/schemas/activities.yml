@@ -1,0 +1,34 @@
+name: activities
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  subject: text
+  type: text
+  owner_id: bigint
+  creator_user_id: bigint
+  deal_id: bigint
+  lead_id: text
+  person_id: bigint
+  org_id: bigint
+  project_id: bigint
+  due_date: date
+  due_time: text
+  duration: text
+  busy: bool
+  done: bool
+  marked_as_done_time: timestamp
+  location: json
+  participants: json
+  attendees: json
+  conference_meeting_client: text
+  conference_meeting_url: text
+  conference_meeting_id: text
+  public_description: text
+  priority: bigint
+  outcome: bigint
+  note: text
+  is_deleted: bool
+  add_time: timestamp
+  update_time: timestamp

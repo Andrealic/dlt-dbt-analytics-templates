@@ -1,0 +1,15 @@
+name: stages
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  pipeline_id: bigint
+  name: text
+  order_nr: bigint
+  deal_probability: bigint
+  is_deal_rot_enabled: bool
+  days_to_rotten: bigint
+  is_deleted: bool
+  add_time: timestamp
+  update_time: timestamp

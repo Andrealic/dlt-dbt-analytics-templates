@@ -1,0 +1,25 @@
+name: users
+primary_key: id
+source_updated_at: modified
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  name: text
+  email: text
+  phone: text
+  default_currency: text
+  locale: text
+  lang: bigint
+  timezone_name: text
+  timezone_offset: text
+  role_id: bigint
+  icon_url: text
+  access: json
+  activated: bool
+  active_flag: bool
+  has_created_company: bool
+  is_you: bool
+  is_deleted: bool
+  last_login: timestamp
+  created: timestamp
+  modified: timestamp

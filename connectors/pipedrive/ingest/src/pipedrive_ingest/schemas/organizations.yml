@@ -1,0 +1,20 @@
+name: organizations
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  name: text
+  owner_id: bigint
+  visible_to: bigint
+  address: json
+  label_ids: json
+  website: text
+  linkedin: text
+  industry: bigint
+  annual_revenue: bigint
+  employee_count: bigint
+  is_deleted: bool
+  add_time: timestamp
+  update_time: timestamp
+  custom_fields: json
