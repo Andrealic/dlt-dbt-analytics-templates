@@ -1,0 +1,13 @@
+name: deal_fields
+primary_key: field_code
+columns:
+  field_code: text
+  field_name: text
+  description: text
+  field_type: text
+  options: json
+  subfields: json
+  is_custom_field: bool
+  is_optional_response_field: bool
+  important_fields: json
+  required_fields: json

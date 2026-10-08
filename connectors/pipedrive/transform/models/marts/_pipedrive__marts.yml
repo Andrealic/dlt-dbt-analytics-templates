@@ -1,0 +1,115 @@
+version: 2
+
+# Foreign keys to persons, organizations, and users are tested with severity warn: a
+# record deleted in Pipedrive leaves the marts, while deals and activities that still
+# reference it remain.
+
+models:
+  - name: fct_deals
+    description: >
+      One row per deal with pipeline, stage, owner, organization, and person resolved.
+      Includes decoded deal custom fields.
+    columns:
+      - name: deal_id
+        data_tests: [unique, not_null]
+      - name: status
+        description: open, won, or lost.
+      - name: stage_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_pipedrive__pipeline_stages')
+                field: stage_id
+      - name: owner_user_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_users')
+                field: user_id
+              config:
+                severity: warn
+      - name: organization_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organizations')
+                field: organization_id
+              config:
+                severity: warn
+      - name: person_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_persons')
+                field: person_id
+              config:
+                severity: warn
+      - name: won_at
+        description: When the deal was marked won; null unless status is won.
+      - name: lost_at
+        description: When the deal was marked lost; null unless status is lost.
+
+  - name: fct_activities
+    description: One row per activity with its owner and linked deal, person, and organization.
+    columns:
+      - name: activity_id
+        data_tests: [unique, not_null]
+      - name: owner_user_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_users')
+                field: user_id
+              config:
+                severity: warn
+      - name: deal_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('fct_deals')
+                field: deal_id
+              config:
+                severity: warn
+      - name: person_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_persons')
+                field: person_id
+              config:
+                severity: warn
+      - name: organization_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organizations')
+                field: organization_id
+              config:
+                severity: warn
+
+  - name: dim_persons
+    description: One row per person, with organization resolved and decoded person custom fields.
+    columns:
+      - name: person_id
+        data_tests: [unique, not_null]
+      - name: organization_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organizations')
+                field: organization_id
+              config:
+                severity: warn
+
+  - name: dim_organizations
+    description: One row per organization, with decoded organization custom fields.
+    columns:
+      - name: organization_id
+        data_tests: [unique, not_null]
+
+  - name: dim_users
+    description: One row per Pipedrive user.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]

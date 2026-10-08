@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: int_pipedrive__pipeline_stages
+    description: One row per stage with its pipeline resolved, for placing deals in the funnel.
+    columns:
+      - name: stage_id
+        data_tests: [unique, not_null]
+      - name: pipeline_id
+        data_tests: [not_null]

@@ -1,0 +1,49 @@
+name: pipedrive
+version: 0.1.0
+auth:
+  method: api_token
+entities:
+  - name: deals
+    sync: incremental
+    cursor: update_time
+    bronze_table: pipedrive.deals
+    models: [stg_pipedrive__deals]
+  - name: persons
+    sync: incremental
+    cursor: update_time
+    bronze_table: pipedrive.persons
+    models: [stg_pipedrive__persons]
+  - name: organizations
+    sync: incremental
+    cursor: update_time
+    bronze_table: pipedrive.organizations
+    models: [stg_pipedrive__organizations]
+  - name: activities
+    sync: incremental
+    cursor: update_time
+    bronze_table: pipedrive.activities
+    models: [stg_pipedrive__activities]
+  - name: pipelines
+    sync: full_refresh
+    bronze_table: pipedrive.pipelines
+    models: [stg_pipedrive__pipelines]
+  - name: stages
+    sync: full_refresh
+    bronze_table: pipedrive.stages
+    models: [stg_pipedrive__stages]
+  - name: users
+    sync: full_refresh
+    bronze_table: pipedrive.users
+    models: [stg_pipedrive__users]
+  - name: deal_fields
+    sync: full_refresh
+    bronze_table: pipedrive.deal_fields
+    models: [stg_pipedrive__deal_fields, stg_pipedrive__deals]
+  - name: person_fields
+    sync: full_refresh
+    bronze_table: pipedrive.person_fields
+    models: [stg_pipedrive__person_fields, stg_pipedrive__persons]
+  - name: organization_fields
+    sync: full_refresh
+    bronze_table: pipedrive.organization_fields
+    models: [stg_pipedrive__organization_fields, stg_pipedrive__organizations]

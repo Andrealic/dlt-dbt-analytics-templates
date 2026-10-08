@@ -1,0 +1,12 @@
+name: pipelines
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  name: text
+  order_nr: bigint
+  is_deal_probability_enabled: bool
+  is_deleted: bool
+  add_time: timestamp
+  update_time: timestamp

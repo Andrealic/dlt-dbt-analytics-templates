@@ -1,0 +1,36 @@
+name: deals
+primary_key: id
+source_updated_at: update_time
+deleted_flag: is_deleted
+columns:
+  id: bigint
+  title: text
+  owner_id: bigint
+  person_id: bigint
+  org_id: bigint
+  pipeline_id: bigint
+  stage_id: bigint
+  value: double
+  currency: text
+  status: text
+  probability: double
+  lost_reason: text
+  visible_to: bigint
+  label_ids: json
+  is_deleted: bool
+  is_archived: bool
+  origin: text
+  origin_id: text
+  channel: bigint
+  channel_id: text
+  arr: double
+  mrr: double
+  acv: double
+  expected_close_date: date
+  add_time: timestamp
+  update_time: timestamp
+  stage_change_time: timestamp
+  close_time: timestamp
+  won_time: timestamp
+  lost_time: timestamp
+  custom_fields: json

@@ -1,0 +1,457 @@
+version: 2
+
+sources:
+  - name: pipedrive
+    description: >
+      Bronze Iceberg tables written by the Pipedrive ingest. One row per primary key,
+      holding the latest version found in raw, so keys are unique by construction; they
+      are tested in staging. A table exists once its entity has a first record. Declared
+      in ingest/src/pipedrive_ingest/schemas/; metadata columns follow the lake contract.
+    database: "{{ var('lake_catalog', 'lake') }}"
+    schema: pipedrive
+    loaded_at_field: _loaded_at
+    tables:
+      - name: deals
+        description: "Deals, including deleted (flagged) and archived ones. Incremental, upserted on id."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: title
+            data_type: varchar
+          - name: owner_id
+            data_type: bigint
+          - name: person_id
+            data_type: bigint
+          - name: org_id
+            data_type: bigint
+          - name: pipeline_id
+            data_type: bigint
+          - name: stage_id
+            data_type: bigint
+          - name: value
+            data_type: double
+          - name: currency
+            data_type: varchar
+          - name: status
+            data_type: varchar
+          - name: probability
+            data_type: double
+          - name: lost_reason
+            data_type: varchar
+          - name: visible_to
+            data_type: bigint
+          - name: label_ids
+            data_type: varchar
+          - name: is_deleted
+            data_type: boolean
+          - name: is_archived
+            data_type: boolean
+          - name: origin
+            data_type: varchar
+          - name: origin_id
+            data_type: varchar
+          - name: channel
+            data_type: bigint
+          - name: channel_id
+            data_type: varchar
+          - name: arr
+            data_type: double
+          - name: mrr
+            data_type: double
+          - name: acv
+            data_type: double
+          - name: expected_close_date
+            data_type: date
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: stage_change_time
+            data_type: timestamp with time zone
+          - name: close_time
+            data_type: timestamp with time zone
+          - name: won_time
+            data_type: timestamp with time zone
+          - name: lost_time
+            data_type: timestamp with time zone
+          - name: custom_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: persons
+        description: "Persons (contacts). Incremental, upserted on id."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: name
+            data_type: varchar
+          - name: first_name
+            data_type: varchar
+          - name: last_name
+            data_type: varchar
+          - name: owner_id
+            data_type: bigint
+          - name: org_id
+            data_type: bigint
+          - name: emails
+            data_type: varchar
+          - name: phones
+            data_type: varchar
+          - name: visible_to
+            data_type: bigint
+          - name: label_ids
+            data_type: varchar
+          - name: picture_id
+            data_type: bigint
+          - name: postal_address
+            data_type: varchar
+          - name: notes
+            data_type: varchar
+          - name: im
+            data_type: varchar
+          - name: birthday
+            data_type: varchar
+          - name: job_title
+            data_type: varchar
+          - name: is_deleted
+            data_type: boolean
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: custom_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: organizations
+        description: "Organizations (accounts). Incremental, upserted on id."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: name
+            data_type: varchar
+          - name: owner_id
+            data_type: bigint
+          - name: visible_to
+            data_type: bigint
+          - name: address
+            data_type: varchar
+          - name: label_ids
+            data_type: varchar
+          - name: website
+            data_type: varchar
+          - name: linkedin
+            data_type: varchar
+          - name: industry
+            data_type: bigint
+          - name: annual_revenue
+            data_type: bigint
+          - name: employee_count
+            data_type: bigint
+          - name: is_deleted
+            data_type: boolean
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: custom_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: activities
+        description: "Activities: calls, meetings, tasks. Incremental, upserted on id."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: subject
+            data_type: varchar
+          - name: type
+            data_type: varchar
+          - name: owner_id
+            data_type: bigint
+          - name: creator_user_id
+            data_type: bigint
+          - name: deal_id
+            data_type: bigint
+          - name: lead_id
+            data_type: varchar
+          - name: person_id
+            data_type: bigint
+          - name: org_id
+            data_type: bigint
+          - name: project_id
+            data_type: bigint
+          - name: due_date
+            data_type: date
+          - name: due_time
+            data_type: varchar
+          - name: duration
+            data_type: varchar
+          - name: busy
+            data_type: boolean
+          - name: done
+            data_type: boolean
+          - name: marked_as_done_time
+            data_type: timestamp with time zone
+          - name: location
+            data_type: varchar
+          - name: participants
+            data_type: varchar
+          - name: attendees
+            data_type: varchar
+          - name: conference_meeting_client
+            data_type: varchar
+          - name: conference_meeting_url
+            data_type: varchar
+          - name: conference_meeting_id
+            data_type: varchar
+          - name: public_description
+            data_type: varchar
+          - name: priority
+            data_type: bigint
+          - name: outcome
+            data_type: bigint
+          - name: note
+            data_type: varchar
+          - name: is_deleted
+            data_type: boolean
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: pipelines
+        description: "Sales pipelines. Full refresh, replaced on every load."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: name
+            data_type: varchar
+          - name: order_nr
+            data_type: bigint
+          - name: is_deal_probability_enabled
+            data_type: boolean
+          - name: is_deleted
+            data_type: boolean
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: stages
+        description: "Pipeline stages. Full refresh, replaced on every load."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: pipeline_id
+            data_type: bigint
+          - name: name
+            data_type: varchar
+          - name: order_nr
+            data_type: bigint
+          - name: deal_probability
+            data_type: bigint
+          - name: is_deal_rot_enabled
+            data_type: boolean
+          - name: days_to_rotten
+            data_type: bigint
+          - name: is_deleted
+            data_type: boolean
+          - name: add_time
+            data_type: timestamp with time zone
+          - name: update_time
+            data_type: timestamp with time zone
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: users
+        description: "Pipedrive users (deal and record owners). Full refresh, replaced on every load."
+        columns:
+          - name: id
+            data_type: bigint
+          - name: name
+            data_type: varchar
+          - name: email
+            data_type: varchar
+          - name: phone
+            data_type: varchar
+          - name: default_currency
+            data_type: varchar
+          - name: locale
+            data_type: varchar
+          - name: lang
+            data_type: bigint
+          - name: timezone_name
+            data_type: varchar
+          - name: timezone_offset
+            data_type: varchar
+          - name: role_id
+            data_type: bigint
+          - name: icon_url
+            data_type: varchar
+          - name: access
+            data_type: varchar
+          - name: activated
+            data_type: boolean
+          - name: active_flag
+            data_type: boolean
+          - name: has_created_company
+            data_type: boolean
+          - name: is_you
+            data_type: boolean
+          - name: is_deleted
+            data_type: boolean
+          - name: last_login
+            data_type: timestamp with time zone
+          - name: created
+            data_type: timestamp with time zone
+          - name: modified
+            data_type: timestamp with time zone
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+          - name: _is_deleted
+            data_type: boolean
+      - name: deal_fields
+        description: "Deal field definitions, used to decode deal custom fields. Full refresh, replaced on every load."
+        columns:
+          - name: field_code
+            data_type: varchar
+          - name: field_name
+            data_type: varchar
+          - name: description
+            data_type: varchar
+          - name: field_type
+            data_type: varchar
+          - name: options
+            data_type: varchar
+          - name: subfields
+            data_type: varchar
+          - name: is_custom_field
+            data_type: boolean
+          - name: is_optional_response_field
+            data_type: boolean
+          - name: important_fields
+            data_type: varchar
+          - name: required_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+      - name: person_fields
+        description: "Person field definitions, used to decode person custom fields. Full refresh, replaced on every load."
+        columns:
+          - name: field_code
+            data_type: varchar
+          - name: field_name
+            data_type: varchar
+          - name: field_type
+            data_type: varchar
+          - name: options
+            data_type: varchar
+          - name: subfields
+            data_type: varchar
+          - name: is_custom_field
+            data_type: boolean
+          - name: is_optional_response_field
+            data_type: boolean
+          - name: important_fields
+            data_type: varchar
+          - name: required_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
+      - name: organization_fields
+        description: "Organization field definitions, used to decode organization custom fields. Full refresh, replaced on every load."
+        columns:
+          - name: field_code
+            data_type: varchar
+          - name: field_name
+            data_type: varchar
+          - name: field_type
+            data_type: varchar
+          - name: options
+            data_type: varchar
+          - name: subfields
+            data_type: varchar
+          - name: is_custom_field
+            data_type: boolean
+          - name: is_optional_response_field
+            data_type: boolean
+          - name: important_fields
+            data_type: varchar
+          - name: required_fields
+            data_type: varchar
+          - name: _load_id
+            data_type: varchar
+          - name: _raw_load_id
+            data_type: varchar
+          - name: _loaded_at
+            data_type: timestamp with time zone
+          - name: _source_updated_at
+            data_type: timestamp with time zone
