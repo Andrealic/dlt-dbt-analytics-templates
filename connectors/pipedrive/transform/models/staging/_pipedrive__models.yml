@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: stg_pipedrive__deals
+    description: >
+      One row per deal not deleted in Pipedrive. Columns renamed and cast; custom fields
+      decoded into `custom_*` columns (see macros/custom_fields.sql).
+    columns:
+      - name: deal_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [open, won, lost]
+      - name: pipeline_id
+        data_tests: [not_null]
+      - name: stage_id
+        data_tests: [not_null]
+      - name: custom_fields
+        description: All custom field values as JSON, keyed by field code.
+
+  - name: stg_pipedrive__persons
+    description: One row per person not deleted in Pipedrive, with decoded custom fields.
+    columns:
+      - name: person_id
+        data_tests: [unique, not_null]
+      - name: primary_email
+        description: Email flagged as primary in `emails`.
+      - name: primary_phone
+        description: Phone number flagged as primary in `phones`.
+
+  - name: stg_pipedrive__organizations
+    description: One row per organization not deleted in Pipedrive, with decoded custom fields.
+    columns:
+      - name: organization_id
+        data_tests: [unique, not_null]
+      - name: industry_option_id
+        description: Option id of the built-in industry field (see stg_pipedrive__organization_fields).
+
+  - name: stg_pipedrive__activities
+    description: One row per activity not deleted in Pipedrive.
+    columns:
+      - name: activity_id
+        data_tests: [unique, not_null]
+      - name: activity_type
+        description: Activity type key, such as `call` or `meeting`.
+
+  - name: stg_pipedrive__pipelines
+    description: One row per pipeline.
+    columns:
+      - name: pipeline_id
+        data_tests: [unique, not_null]
+
+  - name: stg_pipedrive__stages
+    description: One row per pipeline stage.
+    columns:
+      - name: stage_id
+        data_tests: [unique, not_null]
+      - name: pipeline_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_pipedrive__pipelines')
+                field: pipeline_id
+
+  - name: stg_pipedrive__users
+    description: One row per Pipedrive user not deleted from the company.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+
+  - name: stg_pipedrive__deal_fields
+    description: Deal field definitions, built-in and custom.
+    columns:
+      - name: field_code
+        description: Field key; a 40-character hash for custom fields.
+        data_tests: [unique, not_null]
+
+  - name: stg_pipedrive__person_fields
+    description: Person field definitions, built-in and custom.
+    columns:
+      - name: field_code
+        data_tests: [unique, not_null]
+
+  - name: stg_pipedrive__organization_fields
+    description: Organization field definitions, built-in and custom.
+    columns:
+      - name: field_code
+        data_tests: [unique, not_null]

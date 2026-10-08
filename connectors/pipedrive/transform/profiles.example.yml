@@ -1,0 +1,47 @@
+# Copy to profiles.yml (git-ignored) or ~/.dbt/profiles.yml.
+#
+# dev and prod differ only in the environment variables they are run with: each
+# environment has its own bucket and Iceberg REST catalog. DuckDB is compute only;
+# with path ":memory:" nothing is kept locally. Use a file path instead if any layer
+# is configured with output location `engine`.
+
+pipedrive:
+  target: dev
+  outputs:
+    dev: &lake
+      type: duckdb
+      path: ":memory:"
+      # Iceberg catalog commits from concurrent models conflict (duckdb/dbt-duckdb#691).
+      threads: 1
+      extensions: [httpfs, iceberg]
+      secrets:
+        # Storage credentials, used by DuckDB directly. For GCS, use type: gcs with an
+        # HMAC key_id and secret instead.
+        - type: s3
+          key_id: "{{ env_var('LAKE_S3_ACCESS_KEY_ID') }}"
+          secret: "{{ env_var('LAKE_S3_SECRET_ACCESS_KEY') }}"
+          region: "{{ env_var('LAKE_S3_REGION') }}"
+        # Catalog credentials (OAuth2 client credentials).
+        - type: iceberg
+          name: iceberg_catalog
+          client_id: "{{ env_var('ICEBERG_CLIENT_ID') }}"
+          client_secret: "{{ env_var('ICEBERG_CLIENT_SECRET') }}"
+          oauth2_server_uri: "{{ env_var('ICEBERG_OAUTH2_SERVER_URI') }}"
+      attach:
+        # The alias must match the `lake_catalog` var (default: lake).
+        - path: "{{ env_var('ICEBERG_WAREHOUSE') }}"
+          alias: lake
+          type: iceberg
+          secret: iceberg_catalog
+          options:
+            endpoint: "{{ env_var('ICEBERG_CATALOG_URI') }}"
+            # Use the S3 secret above instead of credentials vended by the catalog.
+            access_delegation_mode: none
+    prod: *lake
+
+    # Without a lake: bronze tables read as empty. CI builds every layer here with
+    # output_locations set to engine.
+    ci:
+      type: duckdb
+      path: ":memory:"
+      threads: 1

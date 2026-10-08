@@ -1,0 +1,34 @@
+name: pipedrive
+version: "0.1.0"
+config-version: 2
+profile: pipedrive
+require-dbt-version: [">=1.10.0", "<2.0.0"]
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+vars:
+  # Alias of the attached Iceberg REST catalog (see profiles.example.yml).
+  lake_catalog: lake
+  # Output location per layer: lake (default) or engine. Example: {marts: engine}
+  output_locations: {}
+  # Optional custom field allow-list per entity, mapping field code to column name.
+  # Example: {deals: {dcf558aac1ae4e8c4f849ba5e668430d8df9be12: lead_source}}
+  pipedrive_custom_fields: {}
+
+models:
+  pipedrive:
+    # Every model selects its complete current state. dbt-duckdb cannot create Iceberg
+    # tables through `table` or `view`, nor run `--full-refresh`, so models are
+    # incremental and rewrite their rows in place (strategy defined in dlt_dbt_shared).
+    +materialized: incremental
+    +incremental_strategy: overwrite
+    +full_refresh: false
+    +on_schema_change: append_new_columns
+    staging:
+      +schema: staging
+    intermediate:
+      +schema: intermediate
+    marts:
+      +schema: marts

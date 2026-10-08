@@ -1,0 +1,4 @@
+packages:
+  - local: ../../../packages/shared
+    name: dlt_dbt_shared
+sha1_hash: ae6b7b1402cea54722f6f258079641fb7b6b3faa
